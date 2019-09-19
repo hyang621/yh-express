@@ -1,14 +1,20 @@
 const express = require("express");
+const auth=require("../middlewares/auth");
 const PostModel=require("../models/post");
 const router = express.Router();
 
-
-router.get("/create",(req,res)=>{
-    res.render("posts/create");
+//文章新增
+router.get("/create",auth(),(req,res)=>{
+    if(!req.session.user){
+        res.send;
+    }
+    res.render("posts/create",{
+        user:req.session.user
+    });
 });
 
 //文章列表
-router.get("/",async(req,res)=>{
+router.get("/",auth(),async(req,res)=>{
     //从url地址上获取当前的页数
     let pageNum=parseInt(req.query.pageNum)||1;
     let pageSize=parseInt(req.query.pageSize)||5;
@@ -25,24 +31,26 @@ router.get("/",async(req,res)=>{
     res.render("posts/index",{
         list,
         total,
-        pageNum
+        pageNum,
+        user:req.session.user
     });
 });
 
 //文章详情页
-router.get("/:id",async(req,res)=>{
+router.get("/:id",auth(),async(req,res)=>{
     //1.获取到文章的id
     let id = req.params.id;
     //2.根据这个id去数据库中查找那个文件
     let data = await PostModel.findById(id);
     //3.渲染页面
     res.render("posts/show",{
-        postInfo:data
+        postInfo:data,
+        user:req.session.user
     });
 });
 
 //新增文章
-router.post("/store",async(req,res)=>{
+router.post("/store",auth(),async(req,res)=>{
     //1.数据的校验
     if(!req.body.title || !req.body.content){
         res.send("参数有错误");
@@ -56,19 +64,20 @@ router.post("/store",async(req,res)=>{
 });
 
 //文章编辑页面
-router.get("/:id/edit",async (req,res)=>{
+router.get("/:id/edit",auth(),async (req,res)=>{
     //根据文章id获取它的信息
     let id= req.params.id;
     let post =await PostModel.findById(id);
     res.render("posts/eidt",{
         id:post._id,
         title:post.title,
-        content:post.content
+        content:post.content,
+        user:req.session.user
     });
 });
 
 //编辑文章操作
-router.post("/update",async(req,res)=>{
+router.post("/update",auth(),async(req,res)=>{
     //1.需要知道修改的文章id
     let id=req.body.id;
     let title=req.body.title;
@@ -79,7 +88,7 @@ router.post("/update",async(req,res)=>{
 });
 
 //删除的接口，供前端ajax调用
-router.delete("/:id",async(req,res)=>{
+router.delete("/:id",auth(),async(req,res)=>{
     let id=req.params.id;
     await PostModel.deleteOne({_id:id});
     res.send({

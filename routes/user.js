@@ -34,12 +34,48 @@ router.post("/store", async(req, res) => {
         //3.存储到数据库中
         let user = new UserModel({
           username:req.body.username,
-          emai:req.body.email,
+          email:req.body.email,
           password:bcryptjs.hashSync(req.body.password)
         });
         await user.save();
           res.send("注册成功");
       }
+    });
+
+      //登录页面
+      router.get("/login",(req,res)=>{
+        let redirect=req.query.redirect||"posts";
+        res.render("login",{
+          redirect
+        });
+      });
+
+
+      //登录操作
+      router.post("/login",async(req,res)=>{
+        let email = req.body.email;
+        let password =req.body.password;
+        let redirect=req.body.redirect;
+        if(!email || !password){
+          res.send("参数有错误");
+          return;
+        }
+
+         let user = await UserModel.findOne({email:email});
+         if(!user){
+           res.send("用户名或者密码错误");
+           return;
+         }
+         //密码校验
+         let isOk=bcryptjs.compareSync(password,user.password);
+         if(!isOk){
+          res.send("用户名或者密码错误");
+          return;
+         }
+         req.session.user=user;
+        
+         res.redirect(redirect);    
+      });
 
   // //查找数据库表中的邮箱是否有
   // UserModel.findOne({ email:req.body.email }).then(data => {
@@ -62,6 +98,12 @@ router.post("/store", async(req, res) => {
   //       });
   //   }
   // });
-});
+  //退出登录
+  router.post("/logout",(req,res)=>{
+    //清除session
+    req.session.destroy();
+    res.redirect("/users/login");
+  })
+
 
 module.exports = router;
