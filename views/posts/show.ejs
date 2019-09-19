@@ -16,10 +16,10 @@
     </div> -->
     <ul class="nav justify-content-end fixed-bottom pb-4">
       <li class="nav-item">
-        <a href="#" class="nav-link btn btn-link">Edit</a>
+        <a href="/posts/<%= postInfo._id %>/edit" class="nav-link btn btn-link">Edit</a>
       </li>
       <li class="nav-item">
-        <button id="delete" data-id="1" class="nav-link btn btn-link">
+        <button id="delete" data-id="<%= postInfo._id %>" class="nav-link btn btn-link">
           Delete
         </button>
       </li>

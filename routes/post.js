@@ -55,5 +55,37 @@ router.post("/store",async(req,res)=>{
     res.redirect("/posts");
 });
 
+//文章编辑页面
+router.get("/:id/edit",async (req,res)=>{
+    //根据文章id获取它的信息
+    let id= req.params.id;
+    let post =await PostModel.findById(id);
+    res.render("posts/eidt",{
+        id:post._id,
+        title:post.title,
+        content:post.content
+    });
+});
+
+//编辑文章操作
+router.post("/update",async(req,res)=>{
+    //1.需要知道修改的文章id
+    let id=req.body.id;
+    let title=req.body.title;
+    let content=req.body.content;
+    //2.直接做修改
+    let data = await PostModel.updateOne({_id:id},{title,content});
+    res.send("修改成功");
+});
+
+//删除的接口，供前端ajax调用
+router.delete("/:id",async(req,res)=>{
+    let id=req.params.id;
+    await PostModel.deleteOne({_id:id});
+    res.send({
+        code:0,
+        msg:"删除成功"
+    });
+});
 
 module.exports = router;
