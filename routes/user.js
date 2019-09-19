@@ -1,5 +1,6 @@
 const express = require("express");
 const UserModel = require("../models/user");
+const bcryptjs=require("bcryptjs");//密码加密模块
 const router = express.Router();
 
 //注册页面路由
@@ -32,9 +33,9 @@ router.post("/store", async(req, res) => {
       } else {
         //3.存储到数据库中
         let user = new UserModel({
-          username,
-          password,
-          email
+          username:req.body.username,
+          emai:req.body.email,
+          password:bcryptjs.hashSync(req.body.password)
         });
         await user.save();
           res.send("注册成功");
