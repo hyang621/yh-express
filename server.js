@@ -4,6 +4,7 @@ const session=require("express-session");
 
 const userRouter=require("./routes/user");
 const postRouter=require("./routes/post");
+const fileRouter=require("./routes/file");
 const app=express();
 
 
@@ -37,5 +38,10 @@ app.use(cookieParser());
 app.use("/users",userRouter);
 //2.文章相关：/posts
 app.use("/posts",postRouter);
+app.use("/files",fileRouter);
+
+app.get("/",(req,res)=>{
+    res.redirect("/posts");
+});
 
 app.listen(3000);

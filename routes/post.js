@@ -4,7 +4,7 @@ const auth=require("../middlewares/auth");
 const PostModel=require("../models/post");
 const router = express.Router();
 
-//文章新增
+//文章新增页面
 router.get("/create",auth(),(req,res)=>{
     if(!req.session.user){
         res.send;
@@ -14,7 +14,7 @@ router.get("/create",auth(),(req,res)=>{
     });
 });
 
-//文章列表
+//文章列表页面
 router.get("/",auth(),async(req,res)=>{
     //从url地址上获取当前的页数
     let pageNum=parseInt(req.query.pageNum)||1;
@@ -62,7 +62,7 @@ router.get("/:id",auth(),async(req,res)=>{
     });
 });
 
-//新增文章
+//新增文章操作
 router.post("/store",auth(),async(req,res)=>{
     //1.数据的校验
     if(!req.body.title || !req.body.content){
