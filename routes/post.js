@@ -1,4 +1,5 @@
 const express = require("express");
+const moment=require("moment");
 const auth=require("../middlewares/auth");
 const PostModel=require("../models/post");
 const router = express.Router();
@@ -27,6 +28,18 @@ router.get("/",auth(),async(req,res)=>{
     .sort({updatedAt:-1})//排序
     .skip((pageNum-1)*pageSize)
     .limit(pageSize);
+    list=JSON.parse(JSON.stringify(list));
+    list.forEach(item=>{
+        let abc =new Date(item.updatedAt);
+        // let year = abc.getFullYear();
+        // let month = abc.getMonth()+1;
+        // let date = abc.getDate();
+
+        // let h=abc.getHours();
+        // let m=abc.getMinutes();
+        // let s=abc.getSeconds();
+        item.updatedAt=moment(abc).format("YYYY-MM-DD HH:mm:ss");
+    })
   
     res.render("posts/index",{
         list,

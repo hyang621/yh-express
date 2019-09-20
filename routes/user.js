@@ -44,7 +44,7 @@ router.post("/store", async(req, res) => {
 
       //登录页面
       router.get("/login",(req,res)=>{
-        let redirect=req.query.redirect||"posts";
+        let redirect=req.query.redirect||"/posts";
         res.render("login",{
           redirect
         });
